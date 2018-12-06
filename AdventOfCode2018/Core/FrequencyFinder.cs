@@ -12,27 +12,34 @@ namespace AdventOfCode2018.Core
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            
+
             _frequenciesReached = new List<int>();
             var resp = GetFrequency(frequencyRecurringXTimes);
             stopwatch.Stop();
+
             var elapsedTime = stopwatch.ElapsedMilliseconds;
-            
             return resp;
 
         }
 
         private int GetFrequency(int frequencyRecurringXTimes, int currentFrequency = 0, int currentFrequencyRepeatedXTimes = 0)
         {
-            foreach (var t in ResearchData.Frequencies)
+            while (true)
             {
-                currentFrequency += t;
+                foreach (var frequency in ResearchData.Frequencies)
+                {
+                    currentFrequency += frequency;
 
-                if (CheckForRepeatedFrequencyMatchWith(frequencyRecurringXTimes, ref currentFrequencyRepeatedXTimes, currentFrequency))
-                    return currentFrequency;
+                    if (CheckForRepeatedFrequencyMatchWith(frequencyRecurringXTimes, ref currentFrequencyRepeatedXTimes, currentFrequency))
+                    {
+                        return currentFrequency;
+                    }
+                }
+
+                if (frequencyRecurringXTimes > 0) continue;
+
+                return currentFrequency;
             }
-
-            return frequencyRecurringXTimes > 0 ? GetFrequency(frequencyRecurringXTimes, currentFrequency, currentFrequencyRepeatedXTimes) : currentFrequency;
         }
 
         private bool CheckForRepeatedFrequencyMatchWith(int repeatingFrequencyAt, ref int timesXRepeated, int currentFrequency)
@@ -43,10 +50,10 @@ namespace AdventOfCode2018.Core
             if (_frequenciesReached.Contains(currentFrequency))
             {
                 timesXRepeated++;
-                if(repeatingFrequencyAt == timesXRepeated)
+                if (repeatingFrequencyAt == timesXRepeated)
                     return true;
             }
-            
+
             _frequenciesReached.Add(currentFrequency);
 
             return false;
